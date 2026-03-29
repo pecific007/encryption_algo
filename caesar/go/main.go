@@ -12,17 +12,20 @@ func main() {
 	if len(args) != 3 {
 		fmt.Printf("Usage: %v <input> <output>\n", args[0])
 	}
+
 	// Reading from the input file
 	text, err := os.ReadFile(args[1])
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
+
 	// Input file cannot be empty
 	if len(text) == 0 {
 		fmt.Printf("The input file cannot be empty.\n")
 		return
 	}
+
 	// Creating and opening the output file
 	out, err := os.Create(args[2])
 	if err != nil {
@@ -30,11 +33,13 @@ func main() {
 	}
 	// Automatically closing the output file when function exits
 	defer out.Close()
-	text_s := string(text)
+	text_s := string(text) // Converting to string from []byte
+
 	// Get key from user
 	var key int
 	fmt.Print("Enter key: ")
 	fmt.Scanf("%d", &key)
+
 	// Encrypting text
 	enc := encrypt(text_s, key)
 
