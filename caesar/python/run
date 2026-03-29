@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+python main.py ../plain_text.txt out.txt
