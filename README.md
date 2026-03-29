@@ -12,7 +12,9 @@ Algorithms:
 How to use:
 - Makesure you have all the requriements.
 - In your command line run this:
-    $ ./run
+``` sh
+$ ./run
+```
 
 Requirements:
 - A C language compiler. By default it uses gcc but you can use other compilers by chaning the 'run' executable
