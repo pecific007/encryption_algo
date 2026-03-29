@@ -8,3 +8,13 @@ This project is in development!
 Algorithms:
 - Caesar's Cypher
 - Custom key to encrypt
+
+How to use:
+- Makesure you have all the requriements.
+- In your command line run this:
+    $ ./run
+
+Requirements:
+- A C language compiler. By default it uses gcc but you can use other compilers by chaning the 'run' executable
+- A Go language compiler.
+- A Python interpreter
