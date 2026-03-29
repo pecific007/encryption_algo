@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
     // Opening/creating the output file
     FILE *out = fopen(argv[2], "w");
     if (!out) {
-        fprintf(stdout, "Couldn't open the output file.\n");
+        fprintf(stderr, "Couldn't open the output file.\n");
         fclose(source);
         return 1;
     }
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     fseek(source, 0, SEEK_END);
     int file_size = ftell(source);
     rewind(source);
-
+    // Input file cannot be empty
     if (file_size == 0) {
         fprintf(stderr, "The input file cannot be empty.");
         fclose(source);
