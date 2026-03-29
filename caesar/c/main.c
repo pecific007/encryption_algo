@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     // Opening the source file in read mode
     FILE *source = fopen(argv[1], "r");
     if (!source) {
-        fprintf(stderr, "File %s not found. Makesure you're entered the correct name.\n", argv[1]);
+        fprintf(stderr, "File %s not found. Makesure you've entered the correct name.\n", argv[1]);
         return 1;
     }
 
