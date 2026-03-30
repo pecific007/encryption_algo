@@ -1,8 +1,10 @@
 # How to use:
 
 - You provide the input file with the following fomat:
+```
      KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ
      Some text to encrypt here.
+```
 - Make sure the key is in all capital letters
 
 - Then you also provide an output file name that
