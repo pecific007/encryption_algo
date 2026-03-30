@@ -1,23 +1,3 @@
-/************************| Custom key |************************/
-//                                                            //
-// You provide the input file with the following fomat:       //
-//      KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ                        //
-//      Some text to encrypt here.                            //
-// Make sure the key is in all capital letters                //
-//                                                            //
-// Then you also provide an output file name that             //
-// will be automatically create if it doesn't                 //
-// already exist.                                             //
-//                                                            //
-// This program will encrypt the input file and               //
-// write only the text data into the output file.             //
-//                                                            //
-// In the repository your are provided with a text file that  //
-// will have the correct format. And in the ./run executable  //
-// the file is run with the text input and the output name.   //
-//                                                            //
-/************************| Custom key |************************/
-
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
