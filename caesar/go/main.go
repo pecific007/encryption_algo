@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -24,7 +23,7 @@ func main() {
 
 	// Input file cannot be empty
 	if len(text) == 0 {
-		log.Fatal(errors.New("The input file cannot be empty.\n"))
+		log.Fatal("The input file cannot be empty.\n")
 		return
 	}
 
