@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"os"
 	"unicode"
 )
@@ -11,25 +13,25 @@ func main() {
 	// Making sure enough arguemtns are provided
 	if len(args) != 3 {
 		fmt.Printf("Usage: %v <input> <output>\n", args[0])
+		return
 	}
 
 	// Reading from the input file
 	text, err := os.ReadFile(args[1])
 	if err != nil {
-		fmt.Println(err.Error())
-		return
+		log.Fatal(err)
 	}
 
 	// Input file cannot be empty
 	if len(text) == 0 {
-		fmt.Printf("The input file cannot be empty.\n")
+		log.Fatal(errors.New("The input file cannot be empty.\n"))
 		return
 	}
 
 	// Creating and opening the output file
 	out, err := os.Create(args[2])
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 	// Automatically closing the output file when function exits
 	defer out.Close()
@@ -50,7 +52,7 @@ func main() {
 	// Wrintg to the output file
 	_, err = out.WriteString(enc)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatal(err)
 	}
 }
 
