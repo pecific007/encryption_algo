@@ -11,7 +11,7 @@ func main() {
 	args := os.Args
 	// Making sure enough arguemtns are provided
 	if len(args) != 3 {
-		fmt.Printf("Usage: %v <input> <output>\n", args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %v <input> <output>\n", args[0])
 		return
 	}
 
@@ -24,7 +24,6 @@ func main() {
 	// Input file cannot be empty
 	if len(text) == 0 {
 		log.Fatal("The input file cannot be empty.\n")
-		return
 	}
 
 	// Creating and opening the output file
@@ -48,7 +47,7 @@ func main() {
 	fmt.Printf("Plaintext:\n\t%s\n", text_s)
 	fmt.Printf("Encrypted:\n\t%s\n", enc)
 
-	// Wrintg to the output file
+	// Writing to the output file
 	_, err = out.WriteString(enc)
 	if err != nil {
 		log.Fatal(err)
@@ -56,26 +55,18 @@ func main() {
 }
 
 func encrypt(text string, key int) string {
-	// Setting up some variables
-	ascii_A := 'A'
-	ascii_a := 'a'
+	// Variable to store encrypted text
 	var enc []rune
+
 	// Going throgh each character in text
 	for _, c := range text {
-		if unicode.IsUpper(c) {
-			// If character is uppercase
-			ap := (((c - ascii_A) + rune(key)) % 26) + ascii_A
-			enc = append(enc, ap)
-		} else if unicode.IsLower(c) {
-			// If character is lowercase
-			ap := (((c - ascii_a) + rune(key)) % 26) + ascii_a
-			enc = append(enc, ap)
-		} else {
-			// If character isn't alphabet
-			enc = append(enc, c)
+		switch {
+		case unicode.IsUpper(c):
+			c = (c - 'A') + rune(key)%26 + 'A'
+		case unicode.IsLower(c):
+			c = (c - 'a') + rune(key)%26 + 'a'
 		}
+		enc = append(enc, c)
 	}
-	// Converting from array or rune to string
-	enc_s := string(enc)
-	return enc_s
+	return string(enc)
 }
