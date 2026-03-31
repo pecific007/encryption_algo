@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,19 +12,15 @@ import (
 // This struct to store all data
 // related to the input file
 type input struct {
-	key      string
-	key_len  uint
-	text     string
-	text_len uint
+	key  string
+	text string
 }
 
 // Method to encrypt the data
 func (ip *input) encrypt() string {
-	// Creating an associative-array/map
-	// to easily reference key with alphabets
-	alpha := map[rune]rune{}
-	for i := range ip.key_len {
-		alpha[rune('A'+i)] = rune(ip.key[i])
+	var alpha [26]rune
+	for i := 0; i < len(ip.key); i++ {
+		alpha[i] = rune(ip.key[i])
 	}
 
 	// Variable to store the encrypted text
@@ -32,15 +29,11 @@ func (ip *input) encrypt() string {
 	// Gonig through each character in text
 	for _, c := range ip.text {
 		switch {
-		// If character is upper-case
 		case unicode.IsUpper(c):
-			// add the corresponding key-letter
-			c = alpha[c]
+			c = alpha[c-'A']
 		case unicode.IsLower(c):
-			// Add the lower-case of the upper-case's corresponding key-letter
-			c = unicode.ToLower(alpha[unicode.ToUpper(c)])
+			c = unicode.ToLower(alpha[c-'a'])
 		}
-		// Append to enc: Upper-case | Lower-case | not alphabet
 		enc = append(enc, rune(c))
 	}
 	return string(enc)
@@ -68,6 +61,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	// Making sure the input file is within size limits
 	maxSize := 1024 * 1024
 	if len(data) == 0 {
@@ -87,7 +81,10 @@ func main() {
 	defer out.Close() // Close output file when fucntion finishes
 
 	// Getting the parsed data
-	ip := parse_file_data(data)
+	ip, err := parse_file_data(data)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Encryping the data
 	enc := ip.encrypt()
@@ -97,23 +94,26 @@ func main() {
 	fmt.Printf("Encrypted: %v\n", enc)
 
 	// Writing to the output file
-	out.WriteString(enc)
+	_, err = out.WriteString(enc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
-func parse_file_data(data []byte) input {
+func parse_file_data(data []byte) (input, error) {
 	keyword := "KEY "
 
 	dataStr := string(data)
 
 	// If key exists then chop off else error
-	if strings.Contains(dataStr, keyword) {
+	if strings.HasPrefix(dataStr, keyword) {
 		dataStr = dataStr[len(keyword):]
 	} else {
-		fmt.Fprintf(os.Stderr,
-			"The keyword '%v' not found. Make sure input file is properly formatted.\n",
-			keyword)
+		message := fmt.Sprintf("The keyword '%v' not found. Make sure input file is properly formatted.\n", keyword)
+		err := errors.New(message)
 		input_format()
-		os.Exit(1)
+		return input{}, err
 	}
 
 	var key []rune
@@ -138,14 +138,12 @@ func parse_file_data(data []byte) input {
 		}
 	}
 
-	// Getting the ke
+	// Getting the text
 	text = dataStr
 
 	ip := input{
-		key:      string(key),
-		text:     text,
-		text_len: uint(len(text)),
-		key_len:  uint(len(string(key))),
+		key:  string(key),
+		text: text,
 	}
-	return ip
+	return ip, nil
 }
