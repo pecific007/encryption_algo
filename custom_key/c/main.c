@@ -135,13 +135,6 @@ input *parse_file_data(const char data[], size_t len) {
     }
 
     size_t txt_len = len - (kw_len + key_len+1);
-    char *text = calloc(1, (txt_len+1));
-    if (!text) {
-        fprintf(stderr, "Couldn't allocate enough memory for text.\n");
-        free(key);
-        free(parsed);
-        return NULL;
-    }
     size_t i = kw_len;
     size_t j = 0;
     while (data[i] != '\n' && j < key_len) {
@@ -153,16 +146,13 @@ input *parse_file_data(const char data[], size_t len) {
     // Reading and storing the text
     i += 1; // To get rid of the newline character
     j = 0;
-    while (i < len && j < txt_len) {
-        text[j] = data[i];
-        ++i;
-        ++j;
-    }
+
+    char *text = data;
 
     // Storing the data into the input data type
     parsed->key = key;
     parsed->key_size = key_len;
-    parsed->text = text;
+    parsed->text = &text;
     parsed->text_size = txt_len;
     return parsed;
 }
