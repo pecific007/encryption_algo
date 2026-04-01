@@ -11,13 +11,13 @@ import (
 
 // This struct to store all data
 // related to the input file
-type input struct {
+type FileInput struct {
 	key  string
 	text string
 }
 
 // Method to encrypt the data
-func (ip *input) encrypt() string {
+func (ip *FileInput) encrypt() string {
 	var alpha [26]rune
 	for i := 0; i < len(ip.key); i++ {
 		alpha[i] = rune(ip.key[i])
@@ -81,7 +81,7 @@ func main() {
 	defer out.Close() // Close output file when fucntion finishes
 
 	// Getting the parsed data
-	ip, err := parse_file_data(data)
+	ip, err := parse_file_data(string(data))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,48 +101,27 @@ func main() {
 
 }
 
-func parse_file_data(data []byte) (input, error) {
+func parse_file_data(data string) (FileInput, error) {
 	keyword := "KEY "
-
-	dataStr := string(data)
-
 	// If key exists then chop off else error
-	if strings.HasPrefix(dataStr, keyword) {
-		dataStr = dataStr[len(keyword):]
+	if strings.HasPrefix(data, keyword) {
+		data = data[len(keyword):]
 	} else {
 		message := fmt.Sprintf("The keyword '%v' not found. Make sure input file is properly formatted.\n", keyword)
 		err := errors.New(message)
 		input_format()
-		return input{}, err
+		return FileInput{}, err
 	}
-
-	var key []rune
-	var text string
-
 	// Getting the key
 	key_len := 26
-	for i, k := range dataStr {
-		if i == key_len {
-			if k == '\n' || k == ' ' {
-				dataStr = dataStr[i+1:]
-			} else {
-				dataStr = dataStr[i:]
-			}
-			break
-		}
-		switch {
-		case unicode.IsUpper(k):
-			key = append(key, k)
-		case unicode.IsLower(k):
-			key = append(key, unicode.ToUpper(k))
-		}
-	}
-
+	key := data[:key_len]
+	key = strings.ToUpper(key)
+	// Chopping off the key with newline char
+	data = data[key_len+1:]
 	// Getting the text
-	text = dataStr
-
-	ip := input{
-		key:  string(key),
+	text := data
+	ip := FileInput{
+		key:  key,
 		text: text,
 	}
 	return ip, nil

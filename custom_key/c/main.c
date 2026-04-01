@@ -9,10 +9,10 @@ typedef struct {
     size_t key_size;
     char *text;
     size_t text_size;
-} input;
+} FileInput;
 
-input *parse_file_data(const char data[], size_t len);
-void encrypt(const input *data, char enc[]);
+FileInput *parse_file_data(const char data[], size_t len);
+void encrypt(const FileInput *data, char enc[]);
 
 int main(int argc, char **argv) {
     // Making sure enough arguments are provided
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
     }
 
     // Parsing the input fiel data to separate data
-    input *file = parse_file_data(data, file_size);
+    FileInput *file = parse_file_data(data, file_size);
     if (!file) {
         free(data);
         fclose(source);
@@ -82,11 +82,8 @@ int main(int argc, char **argv) {
     encrypt(file, enc);
 
     // Showing the user plain text and the encrypted text
-    printf("==========|DATA|==========\n\n");
     printf("Plaintext: %s\n", file->text);
-    printf("Key: %s\n", file->key);
     printf("Encrypted: %s\n", enc);
-    printf("\n==========|END|==========\n");
 
     // Writing to the output file
     fwrite(enc, 1, file->text_size, out);
@@ -103,12 +100,12 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-input *parse_file_data(const char data[], size_t len) {
+FileInput *parse_file_data(const char data[], size_t len) {
     // Declaring some variables
     char KEYWORD[] = "KEY ";
     size_t kw_len = (sizeof(KEYWORD) / sizeof(KEYWORD[0])) - 1;
     size_t key_len = 26;  // Key should include all the letters of the alphabets
-    input *parsed = malloc(sizeof(input));
+    FileInput *parsed = malloc(sizeof(FileInput));
 
     // Making sure the key word exists
     for (size_t i = 0; i < kw_len; ++i) {
@@ -135,6 +132,13 @@ input *parse_file_data(const char data[], size_t len) {
     }
 
     size_t txt_len = len - (kw_len + key_len+1);
+    char *text = calloc(1, (txt_len+1));
+    if (!text) {
+        fprintf(stderr, "Couldn't allocate enough memory for text.\n");
+        free(key);
+        free(parsed);
+        return NULL;
+    }
     size_t i = kw_len;
     size_t j = 0;
     while (data[i] != '\n' && j < key_len) {
@@ -146,18 +150,21 @@ input *parse_file_data(const char data[], size_t len) {
     // Reading and storing the text
     i += 1; // To get rid of the newline character
     j = 0;
-
-    char *text = data;
+    while (i < len && j < txt_len) {
+        text[j] = data[i];
+        ++i;
+        ++j;
+    }
 
     // Storing the data into the input data type
     parsed->key = key;
     parsed->key_size = key_len;
-    parsed->text = &text;
+    parsed->text = text;
     parsed->text_size = txt_len;
     return parsed;
 }
 
-void encrypt(const input *data, char enc[]) {
+void encrypt(const FileInput *data, char enc[]) {
     // Going through each character in text
     for (size_t i = 0; i < data->text_size; ++i) {
         char c = data->text[i];
