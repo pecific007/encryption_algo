@@ -6,7 +6,7 @@ This is not the best implementation of these algorithms and there might be mista
 This project is in development!
 
 ### Algorithms:
-- Caesar's Cypher
+- Caesar's Cipher
 - Custom key to encrypt
 
 ### How to use:
