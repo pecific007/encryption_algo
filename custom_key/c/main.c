@@ -56,6 +56,8 @@ int main(int argc, char **argv) {
     FILE *out = fopen(argv[2], "w");
     if (!out) {
         fprintf(stderr, "Could't open/create the output file.\n");
+        free(data);
+        fclose(source);
         return 1;
     }
 
@@ -64,6 +66,7 @@ int main(int argc, char **argv) {
     if (!file) {
         free(data);
         fclose(source);
+        fclose(out);
         return 1;
     }
 
