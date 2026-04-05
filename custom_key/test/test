@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+RED="\e[0;31m"
+YELLOW="\e[0;33m"
+GREEN="\e[0;32m"
+RESET="\e[0;0m"
+
+output="Lmv urhs Gdl urhs Gsivv urhs"
+
+total=0
+test_passed=0
+
+echo -e "${GREEN}=============================================${RESET}";
+echo -e "${RED}                  TESTS: \e[0;0m";
+echo -e "${GREEN}=============================================${RESET}";
+echo -e ">>${YELLOW} C language.${RESET}";
+echo -e "${GREEN}---------------------------------------------${RESET}\n";
+
+rm out.txt
+gcc ../c/main.c -o c_main && ./c_main text.txt out.txt
+
+outtxt=$(<out.txt)
+total=1
+
+if [[ $outtxt == $output ]]; then
+        echo -e "Test ${GREEN}Passed!${RESET}"
+        test_passed=1
+else
+        echo -e "Test ${RED}Failed!${RESET}"
+fi
+
+
+echo -e "\n${GREEN}---------------------------------------------${RESET}";
+echo -e ">>${YELLOW} Go language.${RESET}";
+echo -e "${GREEN}---------------------------------------------${RESET}\n";
+
+rm out.txt
+go build ../go/main.go && ./main text.txt out.txt
+
+outtxt=$(<out.txt)
+total=2
+
+if [[ $outtxt == $output ]]; then
+        echo -e "Test ${GREEN}Passed!${RESET}"
+        test_passed=2
+else
+        echo -e "Test ${RED}Failed!${RESET}"
+fi
+
+echo -e "\n${GREEN}---------------------------------------------${RESET}";
+echo -e ">>${YELLOW} Python ${RESET}";
+echo -e "${GREEN}---------------------------------------------${RESET}\n";
+
+rm out.txt
+python ../python/main.py text.txt out.txt
+
+outtxt=$(<out.txt)
+total=3
+
+if [[ $outtxt == $output ]]; then
+        echo -e "Test ${GREEN}Passed!${RESET}"
+        test_passed=3
+else
+        echo -e "Test ${RED}Failed!${RESET}"
+fi
+
+echo -e "\n\n${GREEN}=============================================${RESET}";
+echo -e "Total tests: ${YELLOW}$total${RESET}"
+echo -e "Passed tests: ${GREEN}$test_passed${RESET}"
+echo -e "Failed tests: ${RED}$(( $total-$test_passed))${RESET}"
+echo -e "${GREEN}=============================================${RESET}";
