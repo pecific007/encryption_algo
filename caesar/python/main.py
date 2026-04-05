@@ -4,8 +4,8 @@ import sys
 def main():
     args = sys.argv
     # Makesure enough arguments are provided
-    if len(args) != 3:
-        print(f"Usage: {args[0]} <input> <output>")
+    if len(args) != 4:
+        print(f"Usage: {args[0]} <input> <output> <key>")
         return 1
 
     # Try to read fro input file
@@ -23,9 +23,9 @@ def main():
     # Opening/creating output file
     out = open(args[2], "w")
 
-    # Try to get key from the user
+    # Getting key
     try:
-        key = int(input("Enter key: "))
+        key = int(args[3])
     except ValueError:
         print("Invalid key.")
         out.close()

@@ -10,8 +10,8 @@ void encrypt(char plain[], size_t len, int key, char enc[]);
 
 int main(int argc, char **argv) {
     // Making sure enough arguments are provided
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <input> <output>\n", argv[0]);
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <input> <output> <key>\n", argv[0]);
         return 1;
     }
     // Opening the source file in read mode
@@ -65,13 +65,9 @@ int main(int argc, char **argv) {
     text[file_size] = '\0'; // adding null ternimator
 
     // Getting the key from user
-    int key;
-    printf("Enter key: ");
-    if (scanf("%d", &key) != 1) {
-        fprintf(stderr, "Invalid key.\n");
-        return 1;
-    }
-    key = ((key % 26) + 26) % 26;
+    int key = 0;
+    key = atoi(argv[3]) % 26;
+
 
     // Encrypting the text
     char *enc = malloc(file_size+1);

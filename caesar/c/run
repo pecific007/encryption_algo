@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-gcc main.c -o main && ./main ../plain_text.txt out.txt
+gcc main.c -o main && ./main ../plain_text.txt out.txt 1

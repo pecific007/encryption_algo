@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"unicode"
 )
 
 func main() {
 	args := os.Args
 	// Making sure enough arguemtns are provided
-	if len(args) != 3 {
-		fmt.Fprintf(os.Stderr, "Usage: %v <input> <output>\n", args[0])
+	if len(args) != 4 {
+		fmt.Fprintf(os.Stderr, "Usage: %v <input> <output> <key>\n", args[0])
 		return
 	}
 
@@ -35,10 +36,11 @@ func main() {
 	defer out.Close()
 	text_s := string(text) // Converting to string from []byte
 
-	// Get key from user
-	var key int
-	fmt.Print("Enter key: ")
-	fmt.Scanf("%d", &key)
+	// Get key
+	key, err := strconv.Atoi(args[3])
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Encrypting text
 	enc := encrypt(text_s, key)
