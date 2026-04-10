@@ -10,6 +10,11 @@ import (
 
 func main() {
 	args := os.Args
+	if len(args) == 2 && args[1] == "test" {
+		fmt.Println("Testing: Encryption and Decryption...")
+		test();
+		return
+	}
 	// Making sure enough arguemtns are provided
 	if len(args) != 4 {
 		fmt.Fprintf(os.Stderr, "Usage: %v <input> <output> <key>\n", args[0])
@@ -64,11 +69,53 @@ func encrypt(text string, key int) string {
 	for _, c := range text {
 		switch {
 		case unicode.IsUpper(c):
-			c = (c - 'A') + rune(key)%26 + 'A'
+			base := ((c - 'A') + rune(key))
+			if base < 0 {
+				base = 26 + base
+			}
+			c = base % 26 + 'A'
 		case unicode.IsLower(c):
-			c = (c - 'a') + rune(key)%26 + 'a'
+			base := ((c - 'a') + rune(key))
+			if base < 0 {
+				base = 26 + base
+			}
+			c = base % 26 + 'a'
 		}
 		enc = append(enc, c)
 	}
 	return string(enc)
+}
+
+func assert(condition bool) {
+	if !condition {
+		log.Fatal("Assetion Failed.")
+		panic("Assertion failed!")
+	}
+}
+
+func test() {
+	pt := "Hello"
+	/* ---------- Encrypt ---------- */
+	key := 1
+	enc := encrypt(pt, key)
+	assert(enc == "Ifmmp")
+	key = 13
+	enc = encrypt(pt, key)
+	assert(enc == "Uryyb")
+	key = 10
+	enc = encrypt(pt, key)
+	assert(enc == "Rovvy")
+
+	/* ---------- Decrypt ---------- */
+	key = -1
+	enc = encrypt("Ifmmp", key)
+	assert(enc == pt)
+	key = -13
+	enc = encrypt("Uryyb", key)
+	assert(enc == pt)
+	key = -10
+	enc = encrypt("Rovvy", key)
+	assert(enc == pt)
+
+	fmt.Println("All tests passed!")
 }
