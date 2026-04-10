@@ -89,7 +89,6 @@ func encrypt(text string, key int) string {
 func assert(condition bool) {
 	if !condition {
 		log.Fatal("Assetion Failed.")
-		panic("Assertion failed!")
 	}
 }
 
