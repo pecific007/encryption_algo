@@ -13,7 +13,8 @@ void test();
 
 int main(int argc, char **argv) {
     // For testing:
-    if (argc == 2) {
+    if (argc == 2 && strcmp(argv[1], "test") == 0) {
+        printf("Testing: Encryption and Decryption...")
         test();
         return 0;
     }
@@ -137,27 +138,25 @@ void test() {
     char pt[] = "Hello";
     int len = strlen(pt);
     char* enc = calloc(1, len+1);
-    // encrypt
+    // 
+    /* ---------- Encrypt ---------- */
     int key = 1;
     encrypt(pt, len, key, enc);
     assert(strcmp(enc, "Ifmmp") == 0);
-    // encrypt
     key = 13;
     encrypt(pt, len, key, enc);
     assert(strcmp(enc, "Uryyb") == 0);
-    // encrypt
     key = 10;
     encrypt(pt, len, key, enc);
     assert(strcmp(enc, "Rovvy") == 0);
-    // decrypt
+
+    /* ---------- Decrypt ---------- */
     key = -1;
     encrypt("Ifmmp", len, key, enc);
     assert(strcmp(enc, pt) == 0);
-    // decrypt
     key = -13;
     encrypt("Uryyb", len, key, enc);
     assert(strcmp(enc, pt) == 0);
-    // decrypt
     key = -10;
     encrypt("Rovvy", len, key, enc);
     assert(strcmp(enc, pt) == 0);

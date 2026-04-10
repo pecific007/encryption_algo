@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-python main.py ../plain_text.txt out.txt 1
+if [[ "$1" == "test" ]]; then
+        python main.py test
+else
+        python main.py ../plain_text.txt out.txt 1
+fi

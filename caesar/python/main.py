@@ -3,10 +3,14 @@ import sys
 
 def main():
     args = sys.argv
+    if len(args) == 2 and args[1] == "test":
+        print("Testing: Encryption and Decryption...")
+        test()
+        exit(0)
     # Makesure enough arguments are provided
     if len(args) != 4:
         print(f"Usage: {args[0]} <input> <output> <key>")
-        return 1
+        exit(1)
 
     # Try to read fro input file
     try:
@@ -14,11 +18,11 @@ def main():
             text = source.read()
     except FileNotFoundError:
         print(f"File {args[1]} not found. Makesure you've entered correct name")
-        return 1
+        exit(1)
 
     if len(text) == 0:
         print("Input file cannot be empty.")
-        return 1
+        exit(1)
 
     # Opening/creating output file
     out = open(args[2], "w")
@@ -29,7 +33,7 @@ def main():
     except ValueError:
         print("Invalid key.")
         out.close()
-        return 1
+        exit(1)
 
     # Encrypt text
     enc = encrypt(text, key)
@@ -41,7 +45,7 @@ def main():
     # Writing to the output file and closing it
     out.write(enc)
     out.close()
-    return 0
+    exit(1)
 
 
 def encrypt(text, key):
@@ -65,6 +69,31 @@ def encrypt(text, key):
     # Join list into a string and return
     return "".join(enc)
 
+def test():
+    pt = 'Hello'
+    ''' ------------ Encrypt ------------'''
+    key = 1
+    enc = encrypt(pt, key)
+    assert enc == "Ifmmp", "Enc: Key 1 assert failed"
+    key = 13
+    enc = encrypt(pt, key)
+    assert enc == "Uryyb", "Enc: Key 13 assert failed"
+    key = 10
+    enc = encrypt(pt, key)
+    assert enc == "Rovvy", "Enc: Key 13 assert failed"
+
+    ''' ------------ Decrypt ------------'''
+    key = -1
+    enc = encrypt("Ifmmp", key)
+    assert enc == pt, "Dec: Key -1 assert failed"
+    key = -13
+    enc = encrypt("Uryyb", key)
+    assert enc == pt, "Dec: Key -13 assert failed"
+    key = -10
+    enc = encrypt("Rovvy", key)
+    assert enc == pt, "Dec: Key -13 assert failed"
+
+    print("All tests passed!")
 
 # Calling the main function
 if __name__ == "__main__":
