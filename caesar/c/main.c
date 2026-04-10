@@ -1,14 +1,22 @@
 // Caesar's algo => C(i) = (p(i) + k) % 26
 // Where p(i) = Plain text | k = Caesar key | % 26 = Remainder after dividing by 26
+#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_FILE_SIZE 1024*1024
 
 void encrypt(char plain[], size_t len, int key, char enc[]);
+void test();
 
 int main(int argc, char **argv) {
+    // For testing:
+    if (argc == 2) {
+        test();
+        return 0;
+    }
     // Making sure enough arguments are provided
     if (argc != 4) {
         fprintf(stderr, "Usage: %s <input> <output> <key>\n", argv[0]);
@@ -96,18 +104,23 @@ int main(int argc, char **argv) {
 }
 
 void encrypt(char plain[], size_t len, int key, char enc[]) {
-    // Setint up useful variables
-    int ascii_A = 'A';
-    int ascii_a = 'a';
     // iterating through each character of the plani text
     for (size_t i = 0; i < len; ++i) {
         // If the character is uppercase
         if (isupper(plain[i])) {
-            enc[i] = (((plain[i] - ascii_A) + key) % 26) + ascii_A;
+            int base = ((plain[i] - 'A') + key);
+            if (base < 0) {
+                base = 26 + base;
+            }
+            enc[i] = (base % 26) + 'A';
         }
         // If the character is lowercase
         else if (islower(plain[i])) {
-            enc[i] = (((plain[i] - ascii_a) + key) % 26) + ascii_a;
+            int base = ((plain[i] - 'a') + key);
+            if (base < 0) {
+                base = 26 + base;
+            }
+            enc[i] = (base % 26) + 'a';
         }
         // If not an alphabet
         else {
@@ -116,4 +129,39 @@ void encrypt(char plain[], size_t len, int key, char enc[]) {
     }
     // Adding null terminator
     enc[len] = '\0';
+}
+
+
+// Test:
+void test() {
+    char pt[] = "Hello";
+    int len = strlen(pt);
+    char* enc = calloc(1, len+1);
+    // encrypt
+    int key = 1;
+    encrypt(pt, len, key, enc);
+    assert(strcmp(enc, "Ifmmp") == 0);
+    // encrypt
+    key = 13;
+    encrypt(pt, len, key, enc);
+    assert(strcmp(enc, "Uryyb") == 0);
+    // encrypt
+    key = 10;
+    encrypt(pt, len, key, enc);
+    assert(strcmp(enc, "Rovvy") == 0);
+    // decrypt
+    key = -1;
+    encrypt("Ifmmp", len, key, enc);
+    assert(strcmp(enc, pt) == 0);
+    // decrypt
+    key = -13;
+    encrypt("Uryyb", len, key, enc);
+    assert(strcmp(enc, pt) == 0);
+    // decrypt
+    key = -10;
+    encrypt("Rovvy", len, key, enc);
+    assert(strcmp(enc, pt) == 0);
+    // Test passed:
+    printf("All tests passed!\n");
+    free(enc);
 }
