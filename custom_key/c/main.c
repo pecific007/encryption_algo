@@ -15,6 +15,13 @@ typedef struct {
 
 FileInput *parse_file_data(const char data[], size_t len);
 void encrypt(const FileInput *data, char enc[]);
+void input_format() {
+    fprintf(stderr,
+            "Input file format:\n"
+            "KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
+            "text...\n"
+            , argv[0]);
+}
 void test();
 
 int main(int argc, char **argv) {
@@ -25,19 +32,15 @@ int main(int argc, char **argv) {
     }
     // Making sure enough arguments are provided
     if (argc != 3) {
-        fprintf(stderr,
-            "Usage: %s <input> <output>\n"
-            "Input file format:\n"
-            "KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
-            "text...\n"
-            , argv[0]);
+        fprintf(stderr, "Usage: %s <input> <output>\n", argv[0]);
+        input_format();
         return 1;
     }
 
     // Open the input file
     FILE *source = fopen(argv[1], "r");
     if (!source) {
-        fprintf(stderr, "%s couldn't be opened. Make sure you're put the file name correctly\n", argv[1]);
+        perror("File couldn't be opened");
         return 1;
     }
 
@@ -49,12 +52,12 @@ int main(int argc, char **argv) {
     // Reading the input file data
     char *data = calloc(1, (file_size+1));
     if (!data) {
-        fprintf(stderr, "Couldn't allocate enough data.\n");
+        perror("Couldn't allocate enough data.\n");
         fclose(source);
         return 1;
     }
     if (file_size != fread(data, 1, file_size, source)) {
-        fprintf(stderr, "Couldn't read the file.\n");
+        perror("Couldn't read the file");
         fclose(source);
         free(data);
         return 1;
@@ -63,7 +66,7 @@ int main(int argc, char **argv) {
     // Opening/creating output file
     FILE *out = fopen(argv[2], "w");
     if (!out) {
-        fprintf(stderr, "Could't open/create the output file.\n");
+        perror("Could't open/create the output file");
         free(data);
         fclose(source);
         return 1;
@@ -81,7 +84,7 @@ int main(int argc, char **argv) {
     // Encrypting the text
     char *enc = calloc(1, file->text_size);
     if (!enc) {
-        fprintf(stderr, "Couldn't allocate enough memory for encrypted text.\n");
+        perror("Couldn't allocate enough memory");
         free(data);
         fclose(source);
         free(file->key);
@@ -124,12 +127,7 @@ FileInput *parse_file_data(const char data[], size_t len) {
             continue;
         }
         else {
-            fprintf(stderr,
-                "Key word %s not found. Make sure input file is properly formatted\n"
-                "Input file format:\n"
-                "KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
-                "text...\n"
-                , KEYWORD);
+            input_format();
             free(parsed);
             return NULL;
         }
@@ -138,14 +136,14 @@ FileInput *parse_file_data(const char data[], size_t len) {
     // Reading and storing the key
     char *key = calloc(1, (key_len+1));
     if (!key) {
-        fprintf(stderr, "Couldn't allocate enough memory for the key.\n");
+        perror("Couldn't allocate enough memory for the key.\n");
         return NULL;
     }
 
     size_t txt_len = len - (kw_len + key_len+1);
     char *text = calloc(1, (txt_len+1));
     if (!text) {
-        fprintf(stderr, "Couldn't allocate enough memory for text.\n");
+        perror("Couldn't allocate enough memory for text.\n");
         free(key);
         free(parsed);
         return NULL;

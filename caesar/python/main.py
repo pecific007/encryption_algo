@@ -72,27 +72,17 @@ def encrypt(text, key):
 
 def test():
     pt = 'Hello'
+    keys = [ 1, 13, 10 ]
+    results = [ "Ifmmp", "Uryyb", "Rovvy" ]
     ''' ------------ Encrypt ------------'''
-    key = 1
-    enc = encrypt(pt, key)
-    assert enc == "Ifmmp", "Enc: Key 1 assert failed"
-    key = 13
-    enc = encrypt(pt, key)
-    assert enc == "Uryyb", "Enc: Key 13 assert failed"
-    key = 10
-    enc = encrypt(pt, key)
-    assert enc == "Rovvy", "Enc: Key 13 assert failed"
+    for i in range(len(keys)):
+        enc = encrypt(pt, keys[i])
+        assert enc == results[i], f"Enc: Key {i} assert failed"
 
     ''' ------------ Decrypt ------------'''
-    key = -1
-    enc = encrypt("Ifmmp", key)
-    assert enc == pt, "Dec: Key -1 assert failed"
-    key = -13
-    enc = encrypt("Uryyb", key)
-    assert enc == pt, "Dec: Key -13 assert failed"
-    key = -10
-    enc = encrypt("Rovvy", key)
-    assert enc == pt, "Dec: Key -13 assert failed"
+    for i in range(len(keys)):
+        enc = encrypt(results[i], -keys[i])
+        assert enc == pt, f"Dec: Key {i} assert failed"
 
     print("All tests passed!")
 

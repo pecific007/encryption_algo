@@ -92,29 +92,20 @@ func assert(condition bool) {
 	}
 }
 
+// Test:
 func test() {
+	defer fmt.Println("All tests passed!")
 	pt := "Hello"
+	keys := []int { 1, 13, 10 }
+	results := []string { "Ifmmp", "Uryyb", "Rovvy" }
 	/* ---------- Encrypt ---------- */
-	key := 1
-	enc := encrypt(pt, key)
-	assert(enc == "Ifmmp")
-	key = 13
-	enc = encrypt(pt, key)
-	assert(enc == "Uryyb")
-	key = 10
-	enc = encrypt(pt, key)
-	assert(enc == "Rovvy")
-
+	for i, k := range keys {
+		enc := encrypt(pt, k)
+		assert(enc == results[i])
+	}
 	/* ---------- Decrypt ---------- */
-	key = -1
-	enc = encrypt("Ifmmp", key)
-	assert(enc == pt)
-	key = -13
-	enc = encrypt("Uryyb", key)
-	assert(enc == pt)
-	key = -10
-	enc = encrypt("Rovvy", key)
-	assert(enc == pt)
-
-	fmt.Println("All tests passed!")
+	for i, k := range keys {
+		enc := encrypt(results[i], -k)
+		assert(enc == pt)
+	}
 }

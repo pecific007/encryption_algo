@@ -14,7 +14,7 @@ void test();
 int main(int argc, char **argv) {
     // For testing:
     if (argc == 2 && strcmp(argv[1], "test") == 0) {
-        printf("Testing: Encryption and Decryption...")
+        printf("Testing: Encryption and Decryption...\n");
         test();
         return 0;
     }
@@ -26,14 +26,14 @@ int main(int argc, char **argv) {
     // Opening the source file in read mode
     FILE *source = fopen(argv[1], "r");
     if (!source) {
-        fprintf(stderr, "File %s not found. Makesure you've entered the correct name.\n", argv[1]);
+        perror("File couldn't be oepend");
         return 1;
     }
 
     // Opening/creating the output file
     FILE *out = fopen(argv[2], "w");
     if (!out) {
-        fprintf(stderr, "Couldn't open the output file.\n");
+        perror("Couldn't open the output file");
         fclose(source);
         return 1;
     }
@@ -44,12 +44,12 @@ int main(int argc, char **argv) {
     rewind(source);
     // Input file cannot be empty
     if (file_size == 0) {
-        fprintf(stderr, "The input file cannot be empty.");
+        fprintf(stderr, "The input file cannot be empty.\n");
         fclose(source);
         fclose(out);
         return 1;
     } else if (file_size > MAX_FILE_SIZE) {
-        fprintf(stderr, "The input file is too large.\nMax size: 1 MB");
+        fprintf(stderr, "The input file is too large.\nMax size: 1 MB\n");
         fclose(source);
         fclose(out);
         return 1;
@@ -58,14 +58,14 @@ int main(int argc, char **argv) {
     // making the buffer
     char *text = malloc(file_size+1);
     if (!text) {
-        fprintf(stdout, "Couldn't allocate enough memory!\n");
+        perror("Couldn't allocate enough memory!");
         fclose(source);
         fclose(out);
         return 1;
     }
     // Reading the data into the buffer
     if (file_size != fread(text, 1, file_size, source)) {
-        fprintf(stderr, "Couldn't read the file.\n");
+        perror("Couldn't read the file");
         fclose(source);
         fclose(out);
         free(text);
@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
     // Encrypting the text
     char *enc = malloc(file_size+1);
     if (!enc) {
-        fprintf(stderr, "Couldn't allocate enough memory.\n");
+        perror("Couldn't allocate enough memory");
         fclose(source);
         fclose(out);
         free(text);
@@ -135,31 +135,24 @@ void encrypt(char plain[], size_t len, int key, char enc[]) {
 
 // Test:
 void test() {
+    char keys[] = { 1, 13, 10 };
+    char results[][6] = { "Ifmmp", "Uryyb", "Rovvy" };
     char pt[] = "Hello";
     int len = strlen(pt);
     char* enc = calloc(1, len+1);
-    // 
+    size_t len_res = (sizeof results / sizeof results[0])-1;
+
     /* ---------- Encrypt ---------- */
-    int key = 1;
-    encrypt(pt, len, key, enc);
-    assert(strcmp(enc, "Ifmmp") == 0);
-    key = 13;
-    encrypt(pt, len, key, enc);
-    assert(strcmp(enc, "Uryyb") == 0);
-    key = 10;
-    encrypt(pt, len, key, enc);
-    assert(strcmp(enc, "Rovvy") == 0);
+    for (size_t i = 0; i < len_res; ++i) {
+        encrypt(pt, len, keys[i], enc);
+        assert(strcmp(enc, results[i]) == 0);
+    }
 
     /* ---------- Decrypt ---------- */
-    key = -1;
-    encrypt("Ifmmp", len, key, enc);
-    assert(strcmp(enc, pt) == 0);
-    key = -13;
-    encrypt("Uryyb", len, key, enc);
-    assert(strcmp(enc, pt) == 0);
-    key = -10;
-    encrypt("Rovvy", len, key, enc);
-    assert(strcmp(enc, pt) == 0);
+    for (size_t i = 0; i < len_res; ++i) {
+        encrypt(results[i], len, -keys[i], enc);
+        assert(strcmp(enc, pt) == 0);
+    }
     // Test passed:
     printf("All tests passed!\n");
     free(enc);
