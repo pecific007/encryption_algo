@@ -10,62 +10,39 @@ output="Pof gjti Uxp gjti Uisff gjti"
 total=0
 test_passed=0
 
-echo -e "${GREEN}=============================================${RESET}";
-echo -e "${RED}                  TESTS: \e[0;0m";
-echo -e "${GREEN}=============================================${RESET}";
-echo -e ">>${YELLOW} C language.${RESET}";
-echo -e "${GREEN}---------------------------------------------${RESET}\n";
+langs=("C" "Go" "Python")
 
-rm out.txt
-gcc ../c/main.c -o c_main && ./c_main text.txt out.txt 1
+cmd=(
+    "gcc ../c/main.c -o c_main && ./c_main text.txt out.txt 1"
+    "go build ../go/main.go && ./main text.txt out.txt 1"
+    "../python/main.py text.txt out.txt 1"
+)
 
-outtxt=$(<out.txt)
-total=1
+echo -e "${GREEN}=============================================${RESET}"
+echo -e "${RED}                  TESTS: \e[0;0m"
+echo -e "${GREEN}=============================================${RESET}"
 
-if [[ $outtxt == $output ]]; then
+for ((i = 0; i < 3; i++)); do
+
+    echo -e "\n${GREEN}---------------------------------------------${RESET}"
+    echo -e ">>${YELLOW} ${langs[i]} language.${RESET}"
+    echo -e "${GREEN}---------------------------------------------${RESET}\n"
+
+    outtxt=$(<out.txt)
+    total=$((total + 1))
+    rm out.txt
+    eval ${cmd[$i]}
+
+    if [[ $outtxt == $output ]]; then
         echo -e "Test ${GREEN}Passed!${RESET}"
-        test_passed=1
-else
+        test_passed=$((test_passed + 1))
+    else
         echo -e "Test ${RED}Failed!${RESET}"
-fi
+    fi
+done
 
-
-echo -e "\n${GREEN}---------------------------------------------${RESET}";
-echo -e ">>${YELLOW} Go language.${RESET}";
-echo -e "${GREEN}---------------------------------------------${RESET}\n";
-
-rm out.txt
-go build ../go/main.go && ./main text.txt out.txt 1
-
-outtxt=$(<out.txt)
-total=2
-
-if [[ $outtxt == $output ]]; then
-        echo -e "Test ${GREEN}Passed!${RESET}"
-        test_passed=2
-else
-        echo -e "Test ${RED}Failed!${RESET}"
-fi
-
-echo -e "\n${GREEN}---------------------------------------------${RESET}";
-echo -e ">>${YELLOW} Python ${RESET}";
-echo -e "${GREEN}---------------------------------------------${RESET}\n";
-
-rm out.txt
-python ../python/main.py text.txt out.txt 1
-
-outtxt=$(<out.txt)
-total=3
-
-if [[ $outtxt == $output ]]; then
-        echo -e "Test ${GREEN}Passed!${RESET}"
-        test_passed=3
-else
-        echo -e "Test ${RED}Failed!${RESET}"
-fi
-
-echo -e "\n\n${GREEN}=============================================${RESET}";
+echo -e "\n\n${GREEN}=============================================${RESET}"
 echo -e "Total tests: ${YELLOW}$total${RESET}"
 echo -e "Passed tests: ${GREEN}$test_passed${RESET}"
-echo -e "Failed tests: ${RED}$(( $total-$test_passed))${RESET}"
-echo -e "${GREEN}=============================================${RESET}";
+echo -e "Failed tests: ${RED}$(($total - $test_passed))${RESET}"
+echo -e "${GREEN}=============================================${RESET}"
