@@ -23,6 +23,10 @@ class fileInput:
 
 def main():
     args = sys.argv
+    if len(args) == 2 and args[1] == "test":
+        print("Testing: Encryption and Decryption...")
+        test()
+        exit(0)
     if len(args) != 3:
         sys.stderr.write(f"Usage: {args[0]} <input> <output>")
         sys.exit(1)
@@ -34,6 +38,7 @@ def main():
         sys.stderr.write(
             f"File {args[1]} couldn't be oepend. Make sure you typed file name correctly"
         )
+        sys.exit(1)
 
     file, err = parse_input_file(data)
     if err:
@@ -67,11 +72,48 @@ def parse_input_file(data):
         return fileInput("", ""), True
 
     key = lines[0]
+    if len(key) != 26:
+        sys.stderr.write("The key must be 26 characters.")
+        input_format()
+        return fileInput("", ""), True
+
     text = lines[1]
 
     ip = fileInput("".join(key), text)
     return ip, False
 
+def test():
+    text = "Hello"
+    results = [ "Ifmmp", "Uryyb", "Rovvy", ]
+    enc_key = [
+        "BCDEFGHIJKLMNOPQRSTUVWXYZA",
+        "NOPQRSTUVWXYZABCDEFGHIJKLM",
+        "KLMNOPQRSTUVWXYZABCDEFGHIJ",
+    ]
+    dec_key = [
+        "ZABCDEFGHIJKLMNOPQRSTUVWXY",
+        "NOPQRSTUVWXYZABCDEFGHIJKLM",
+        "QRSTUVWXYZABCDEFGHIJKLMNOP",
+    ]
+
+    ''' ---------- Encrypt ----------'''
+    pt = fileInput("", text)
+    for i in range(len(enc_key)):
+        pt.key = enc_key[i]
+        enc = pt.encrypt()
+        assert enc == results[i], f"Enc: Error on key[{i}]"
+
+    ''' ---------- Decrypt ----------'''
+
+    dec = fileInput("", "")
+    for i in range(len(dec_key)):
+        enc = pt.encrypt()
+        dec.key = dec_key[i]
+        dec.text = results[i];
+        enc = dec.encrypt()
+        assert enc == text, f"Dec: Error on key[{i}]"
+
+    print("All tests passed!")
 
 if __name__ == "__main__":
     main()

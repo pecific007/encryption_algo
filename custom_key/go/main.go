@@ -47,9 +47,14 @@ func input_format() {
 }
 
 func main() {
-	// Making sure enough arguments are provided
 	args := os.Args
+	if len(args) == 2 && args[1] == "test" {
+		fmt.Println("Testing: Encryption and Decryption...")
+		test();
+		return
+	}
 
+	// Making sure enough arguments are provided
 	if len(args) != 3 {
 		fmt.Fprintf(os.Stderr, "Usage: %v <input> <output>\n", args[0])
 		input_format()
@@ -125,4 +130,46 @@ func parse_file_data(data string) (FileInput, error) {
 		text: text,
 	}
 	return ip, nil
+}
+
+func assert(cond bool) {
+	if !cond {
+		log.Fatal("Assert Failed!")
+	}
+}
+
+// Test:
+func test() {
+	defer fmt.Println("All tests passed!")
+	text := "Hello"
+	results := []string {"Ifmmp", "Uryyb", "Rovvy" }
+	enc_keys := []string {
+		"BCDEFGHIJKLMNOPQRSTUVWXYZA",
+		"NOPQRSTUVWXYZABCDEFGHIJKLM",
+		"KLMNOPQRSTUVWXYZABCDEFGHIJ",
+	}
+	dec_keys := []string {
+		"ZABCDEFGHIJKLMNOPQRSTUVWXY",
+		"NOPQRSTUVWXYZABCDEFGHIJKLM",
+		"QRSTUVWXYZABCDEFGHIJKLMNOP",
+	}
+	pt := FileInput {
+		key: "",
+		text: text,
+	}
+	crypt := FileInput {
+		key: "",
+		text: "",
+	}
+	for i, k := range enc_keys {
+		pt.key = k
+		enc := pt.encrypt()
+		assert(enc == results[i])
+	}
+	for i, k := range dec_keys {
+		crypt.key = k
+		crypt.text = results[i]
+		enc := crypt.encrypt()
+		assert(enc == text)
+	}
 }

@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-go build main.go && ./main ../plain_text.txt out.txt
+if [[ "$1" == "test" ]]; then
+    go build main.go && ./main test
+else
+    go build main.go && ./main ../plain_text.txt out.txt
+fi
