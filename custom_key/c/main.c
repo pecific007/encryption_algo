@@ -19,8 +19,7 @@ void input_format() {
     fprintf(stderr,
             "Input file format:\n"
             "KEY ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"
-            "text...\n"
-            , argv[0]);
+            "text...\n");
 }
 void test();
 

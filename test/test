@@ -5,7 +5,27 @@ YELLOW="\e[0;33m"
 GREEN="\e[0;32m"
 RESET="\e[0;0m"
 
-output="Pof gjti Uxp gjti Uisff gjti"
+path=""
+key=
+input_file=""
+
+if [[ "$#" != 1 ]]; then
+    echo "Usage: $0 <caesar|custom>"
+    exit 1
+fi
+
+if [[ "$1" == "caesar" ]]; then
+    output="Pof gjti Uxp gjti Uisff gjti"
+    path="caesar"
+    key=1
+    input_file="caesar"
+elif [[ "$1" == "custom" ]]; then
+    output="Lmv urhs Gdl urhs Gsivv urhs"
+    path="custom_key"
+    input_file="custom"
+else
+    echo "Invalid option"
+fi
 
 total=0
 test_passed=0
@@ -13,9 +33,9 @@ test_passed=0
 langs=("C" "Go" "Python")
 
 cmd=(
-    "gcc ../c/main.c -o c_main && ./c_main text.txt out.txt 1"
-    "go build ../go/main.go && ./main text.txt out.txt 1"
-    "../python/main.py text.txt out.txt 1"
+    "gcc ../${path}/c/main.c -o c_main && ./c_main $input_file.txt out.txt $key"
+    "go build ../${path}/go/main.go && ./main $input_file.txt out.txt $key"
+    "../${path}/python/main.py $input_file.txt out.txt $key"
 )
 
 echo -e "${GREEN}=============================================${RESET}"
@@ -25,13 +45,14 @@ echo -e "${GREEN}=============================================${RESET}"
 for ((i = 0; i < 3; i++)); do
 
     echo -e "\n${GREEN}---------------------------------------------${RESET}"
-    echo -e ">>${YELLOW} ${langs[i]} language.${RESET}"
+    echo -e ">>${YELLOW} ${langs[i]} language.${RESET} $key"
     echo -e "${GREEN}---------------------------------------------${RESET}\n"
 
-    outtxt=$(<out.txt)
-    total=$((total + 1))
     rm out.txt
     eval ${cmd[$i]}
+    echo ${cmd[i]}
+    outtxt=$(<out.txt)
+    total=$((total + 1))
 
     if [[ $outtxt == $output ]]; then
         echo -e "Test ${GREEN}Passed!${RESET}"
