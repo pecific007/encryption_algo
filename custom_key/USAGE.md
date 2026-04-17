@@ -15,5 +15,5 @@ already exist.
 write only the text data into the output file.
 
 - In the repository your are provided with a text file that
-will have the correct format. And in the ./run executable
+will have the correct format. And in the `./run` executable
 the file is run with the text input and the output name.

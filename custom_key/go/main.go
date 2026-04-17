@@ -157,19 +157,15 @@ func test() {
 		key: "",
 		text: text,
 	}
-	crypt := FileInput {
-		key: "",
-		text: "",
-	}
 	for i, k := range enc_keys {
 		pt.key = k
 		enc := pt.encrypt()
 		assert(enc == results[i])
 	}
 	for i, k := range dec_keys {
-		crypt.key = k
-		crypt.text = results[i]
-		enc := crypt.encrypt()
+		pt.key = k
+		pt.text = results[i]
+		enc := pt.encrypt()
 		assert(enc == text)
 	}
 }

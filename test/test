@@ -45,12 +45,11 @@ echo -e "${GREEN}=============================================${RESET}"
 for ((i = 0; i < 3; i++)); do
 
     echo -e "\n${GREEN}---------------------------------------------${RESET}"
-    echo -e ">>${YELLOW} ${langs[i]} language.${RESET} $key"
+    echo -e ">>${YELLOW} ${langs[i]} language.${RESET}"
     echo -e "${GREEN}---------------------------------------------${RESET}\n"
 
     rm out.txt
-    eval ${cmd[$i]}
-    echo ${cmd[i]}
+    eval ${cmd[i]}
     outtxt=$(<out.txt)
     total=$((total + 1))
 

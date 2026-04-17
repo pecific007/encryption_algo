@@ -194,7 +194,7 @@ void encrypt(const FileInput *data, char enc[]) {
 // Test:
 void test() {
     char results[][6] = { "Ifmmp", "Uryyb", "Rovvy" };
-
+    char *text = "Hello";
     char enc_keys[][27] = {
         "BCDEFGHIJKLMNOPQRSTUVWXYZA",
         "NOPQRSTUVWXYZABCDEFGHIJKLM",
@@ -208,14 +208,7 @@ void test() {
     FileInput pt = {
         .key = "",
         .key_size = 26,
-        .text = "Hello",
-        .text_size = 5,
-    };
-
-    FileInput crypt = {
-        .key = "",
-        .key_size = 26,
-        .text = "",
+        .text = text,
         .text_size = 5,
     };
 
@@ -233,10 +226,10 @@ void test() {
 
     /* ---------- Decrypt ---------- */
     for (size_t i = 0; i < dec_len; ++i) {
-        crypt.key = dec_keys[i];
-        crypt.text = results[i];
-        encrypt(&crypt, enc);
-        assert(strcmp(enc, pt.text) == 0);
+        pt.key = dec_keys[i];
+        pt.text = results[i];
+        encrypt(&pt, enc);
+        assert(strcmp(enc, text) == 0);
     }
     // Test passed:
     printf("All tests passed!\n");

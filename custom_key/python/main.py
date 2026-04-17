@@ -105,12 +105,11 @@ def test():
 
     ''' ---------- Decrypt ----------'''
 
-    dec = fileInput("", "")
     for i in range(len(dec_key)):
         enc = pt.encrypt()
-        dec.key = dec_key[i]
-        dec.text = results[i];
-        enc = dec.encrypt()
+        pt.key = dec_key[i]
+        pt.text = results[i];
+        enc = pt.encrypt()
         assert enc == text, f"Dec: Error on key[{i}]"
 
     print("All tests passed!")
