@@ -3,7 +3,7 @@
 set -e
 
 if [[ "$1" == "test" ]]; then
-        gcc main.c -o main && ./main test
+    gcc main.c -o main && ./main test
 else
-        gcc main.c -o main && ./main ../plain_text.txt out.txt -26
+    gcc -ggdb main.c -o main && ./main ../plain_text.txt out.txt 1
 fi

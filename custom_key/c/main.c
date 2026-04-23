@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define defer_ret(ret) do {\
+    ret_val = ret;\
+    goto defer;\
+} while (0)
+
 // This struct is to hold all the input file data
 // after it's been parsed
 typedef struct {
@@ -24,6 +29,7 @@ void input_format() {
 void test();
 
 int main(int argc, char **argv) {
+    int ret_val = 0;
     if (argc == 2 && strcmp(argv[1], "test") == 0) {
         printf("Testing: Encryption and Decryption...\n");
         test();
@@ -52,44 +58,31 @@ int main(int argc, char **argv) {
     char *data = calloc(1, (file_size+1));
     if (!data) {
         perror("Couldn't allocate enough data.\n");
-        fclose(source);
-        return 1;
+        defer_ret(1);
     }
     if (file_size != fread(data, 1, file_size, source)) {
         perror("Couldn't read the file");
-        fclose(source);
-        free(data);
-        return 1;
+        defer_ret(1);
     }
 
     // Opening/creating output file
     FILE *out = fopen(argv[2], "w");
     if (!out) {
         perror("Could't open/create the output file");
-        free(data);
-        fclose(source);
-        return 1;
+        defer_ret(1);
     }
 
     // Parsing the input fiel data to separate data
     FileInput *file = parse_file_data(data, file_size);
     if (!file) {
-        free(data);
-        fclose(source);
-        fclose(out);
-        return 1;
+        defer_ret(1);
     }
 
     // Encrypting the text
-    char *enc = calloc(1, file->text_size);
+    char *enc = calloc(1, file->text_size+1);
     if (!enc) {
         perror("Couldn't allocate enough memory");
-        free(data);
-        fclose(source);
-        free(file->key);
-        free(file->text);
-        free(file);
-        return 1;
+        defer_ret(1);
     }
 
     encrypt(file, enc);
@@ -102,15 +95,16 @@ int main(int argc, char **argv) {
     fwrite(enc, 1, file->text_size, out);
 
     // Freeing and closing:
-    free(data);
-    fclose(out);
-    fclose(source);
-    free(file->text);
-    free(file->key);
-    free(file);
-    free(enc);
+defer:
+    if(data)         free(data);
+    if(out)          fclose(out);
+    if(source)       fclose(source);
+    if(file->text)   free(file->text);
+    if(file->key)    free(file->key);
+    if(file)         free(file);
+    if(enc)          free(enc);
 
-    return 0;
+    return ret_val;
 }
 
 FileInput *parse_file_data(const char data[], size_t len) {

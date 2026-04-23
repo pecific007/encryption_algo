@@ -6,12 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 
+// This macro I learned from: https://www.youtube.com/@Tsodingdaily
+// This is essentially simulating defer statements in Go... kind of
+#define defer_ret(ret) do {\
+    ret_val = ret;\
+    goto defer;\
+} while (0)
+
 #define MAX_FILE_SIZE 1024*1024
 
 void encrypt(char plain[], size_t len, int key, char enc[]);
 void test();
 
 int main(int argc, char **argv) {
+    int ret_val = 0;
     // For testing:
     if (argc == 2 && strcmp(argv[1], "test") == 0) {
         printf("Testing: Encryption and Decryption...\n");
@@ -34,8 +42,7 @@ int main(int argc, char **argv) {
     FILE *out = fopen(argv[2], "w");
     if (!out) {
         perror("Couldn't open the output file");
-        fclose(source);
-        return 1;
+        defer_ret(1);
     }
 
     // Figuring out the size of the input file:
@@ -44,32 +51,23 @@ int main(int argc, char **argv) {
     rewind(source);
     // Input file cannot be empty
     if (file_size == 0) {
-        fprintf(stderr, "The input file cannot be empty.\n");
-        fclose(source);
-        fclose(out);
-        return 1;
+        fprintf (stderr, "The input file cannot be empty.\n");
+        defer_ret(1);
     } else if (file_size > MAX_FILE_SIZE) {
-        fprintf(stderr, "The input file is too large.\nMax size: 1 MB\n");
-        fclose(source);
-        fclose(out);
-        return 1;
+        fprintf (stderr, "The input file is too large.\nMax size: 1 MB\n");
+        defer_ret(1);
     }
 
     // making the buffer
     char *text = malloc(file_size+1);
     if (!text) {
-        perror("Couldn't allocate enough memory!");
-        fclose(source);
-        fclose(out);
-        return 1;
+        perror ("Couldn't allocate enough memory!");
+        defer_ret(1);
     }
     // Reading the data into the buffer
     if (file_size != fread(text, 1, file_size, source)) {
-        perror("Couldn't read the file");
-        fclose(source);
-        fclose(out);
-        free(text);
-        return 1;
+        perror ("Couldn't read the file");
+        defer_ret(1);
     }
     text[file_size] = '\0'; // adding null ternimator
 
@@ -81,11 +79,8 @@ int main(int argc, char **argv) {
     // Encrypting the text
     char *enc = malloc(file_size+1);
     if (!enc) {
-        perror("Couldn't allocate enough memory");
-        fclose(source);
-        fclose(out);
-        free(text);
-        return 1;
+        perror ("Couldn't allocate enough memory");
+        defer_ret(1);
     }
     encrypt(text, file_size, key, enc);
 
@@ -97,11 +92,12 @@ int main(int argc, char **argv) {
     fwrite(enc, 1, file_size, out);
 
     // Closing and freeing:
-    fclose(source);
-    fclose(out);
-    free(text);
-    free(enc);
-    return 0;
+defer:
+    if(source) fclose(source);
+    if(out)    fclose(out);
+    if(text)   free(text);
+    if(enc)    free(enc);
+    return ret_val;
 }
 
 void encrypt(char plain[], size_t len, int key, char enc[]) {
