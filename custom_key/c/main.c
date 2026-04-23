@@ -13,9 +13,7 @@
 // after it's been parsed
 typedef struct {
     char *key;
-    size_t key_size;
     char *text;
-    size_t text_size;
 } FileInput;
 
 FileInput *parse_file_data(const char data[], size_t len);
@@ -79,7 +77,7 @@ int main(int argc, char **argv) {
     }
 
     // Encrypting the text
-    char *enc = calloc(1, file->text_size+1);
+    char *enc = calloc(1, strlen(file->text)+1);
     if (!enc) {
         perror("Couldn't allocate enough memory");
         defer_ret(1);
@@ -92,7 +90,7 @@ int main(int argc, char **argv) {
     printf("Encrypted: %s\n", enc);
 
     // Writing to the output file
-    fwrite(enc, 1, file->text_size, out);
+    fwrite(enc, 1, strlen(file->text), out);
 
     // Freeing and closing:
 defer:
@@ -160,15 +158,13 @@ FileInput *parse_file_data(const char data[], size_t len) {
 
     // Storing the data into the input data type
     parsed->key = key;
-    parsed->key_size = key_len;
     parsed->text = text;
-    parsed->text_size = txt_len;
     return parsed;
 }
 
 void encrypt(const FileInput *data, char enc[]) {
     // Going through each character in text
-    for (size_t i = 0; i < data->text_size; ++i) {
+    for (size_t i = 0; i < strlen(data->text); ++i) {
         char c = data->text[i];
         // If character upper case
         if (isupper(c)) {
@@ -201,12 +197,10 @@ void test() {
     };
     FileInput pt = {
         .key = "",
-        .key_size = 26,
         .text = text,
-        .text_size = 5,
     };
 
-    char* enc = calloc(1, pt.text_size);
+    char* enc = calloc(1, strlen(pt.text));
 
     /* ---------- Encrypt ---------- */
     size_t enc_len = (sizeof enc_keys / sizeof enc_keys[0])-1;

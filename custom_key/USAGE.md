@@ -8,7 +8,7 @@
 - Make sure the key is in all capital letters
 
 - Then you also provide an output file name that
-will be automatically create if it doesn't
+will be automatically created if it doesn't
 already exist.
 
 - This program will encrypt the input file and
