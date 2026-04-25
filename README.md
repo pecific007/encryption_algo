@@ -18,6 +18,9 @@ $ ./run
 ```
 
 ### Requirements:
-- A C language compiler. By default it uses gcc but you can use other compilers by chaning the 'run' executable
+- A C language compiler -- (By default it uses gcc but you can use other compilers by chaning the `run` executable)
 - A Go language compiler.
+- A Rust language compiler -- (Use rustc instead of cargo)
+- A Bash interpretter -- (To run shell scripts. Zsh, Fish, etc will also work)
+- A Lua interpreter
 - A Python interpreter

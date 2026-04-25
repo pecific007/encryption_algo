@@ -1,3 +1,4 @@
+// Command to run this: `$ rustc main.rs && ./main`
 fn main() {
     let plain_text = "Hello world";
     let key: u8 = 1;
@@ -17,5 +18,5 @@ fn encrypt(text: &str, key: u8) -> String {
                 c
             }
         })
-    .collect()
+        .collect()
 }

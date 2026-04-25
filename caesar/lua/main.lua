@@ -23,7 +23,7 @@ local function main()
 	print("Plaintext: " .. pt)
 	print("Encrypted: " .. enc)
 
-	local Out = io.open(arg[2], "w")
+	local Out, err = io.open(arg[2], "w")
 	if not Out then
 		io.stderr:write(err .. "\n")
 		os.exit(1)
