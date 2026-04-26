@@ -1,29 +1,32 @@
 #!/usr/bin/env lua
 
+-- Making sure sure enough args are provided
 if #arg ~= 3 then
-	io.stderr:write("Usage: " .. arg[0] .. " <input> <output> <key>")
+	io.stderr:write("Usage: " .. arg[0] .. " <input> <output> <key>\n")
 end
 
 local function main()
-	local filename = arg[1]
-	local source, err = io.open(filename, "r")
+	-- Open the source file
+	local source, err = io.open(arg[1], "r")
 	if not source then
 		io.stderr:write("Couldn't open file." .. err .. "\n")
 		os.exit(1)
 	end
-	local pt = source:read("*a")
+	local pt = source:read("*a") -- Read the source file whole
 
-	local key = tonumber(arg[3])
+	local key = tonumber(arg[3]) -- Making sure the key is a number
 	if not key then
 		io.stderr:write("The key must be an integer value")
 		os.exit()
 	end
 
+	-- Encrypting and showing the text
 	local enc = Encrypt(pt, key)
 	print("Plaintext: " .. pt)
 	print("Encrypted: " .. enc)
 
-	local Out, err = io.open(arg[2], "w")
+	-- Writing to the output file
+	local Out = io.open(arg[2], "w")
 	if not Out then
 		io.stderr:write(err .. "\n")
 		os.exit(1)
