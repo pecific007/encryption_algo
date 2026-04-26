@@ -37,6 +37,7 @@ function Parse_file(all_data)
 			io.stderr:write("The input file must have the keyword: 'KEY'\n")
 			os.exit(1)
 		end
+		break
 	end
 
 	local key_total_len = kw:len() + 2 + key_len
