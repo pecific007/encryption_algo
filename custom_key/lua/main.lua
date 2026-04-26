@@ -32,20 +32,13 @@ end
 function Parse_file(all_data)
 	local kw = "KEY"
 	local key_len = 26
-	local has_kw = false
 	for word in all_data:gmatch("%w+") do
-		if word == kw then
-			has_kw = true
-		else
-			has_kw = false
+		if word ~= kw then
+			io.stderr:write("The input file must have the keyword: 'KEY'\n")
+			os.exit(1)
 		end
-		break
 	end
 
-	if not has_kw then
-		io.stderr:write("The input file must have the keyword: 'KEY '")
-		os.exit(1)
-	end
 	local key_total_len = kw:len() + 2 + key_len
 	local k_str = all_data:sub(kw:len() + 2, key_total_len)
 	local k_table = {}
