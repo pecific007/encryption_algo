@@ -33,7 +33,7 @@ test_passed=0
 langs=("C" "Go" "Python")
 
 cmd=(
-    "gcc ../${path}/c/main.c -o c_main && ./c_main $input_file.txt out.txt $key"
+    "gcc ../${path}/c/main.c -o main && ./c_main $input_file.txt out.txt $key"
     "go build ../${path}/go/main.go && ./main $input_file.txt out.txt $key"
     "../${path}/python/main.py $input_file.txt out.txt $key"
 )
