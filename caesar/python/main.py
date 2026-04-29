@@ -46,7 +46,7 @@ def main():
     # Writing to the output file and closing it
     out.write(enc)
     out.close()
-    exit(1)
+    exit(0)
 
 
 def encrypt(text, key):

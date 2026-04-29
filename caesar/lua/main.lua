@@ -7,9 +7,9 @@ end
 
 local function main()
 	-- Open the source file
-	local source, err = io.open(arg[1], "r")
+	local source, err_src = io.open(arg[1], "r")
 	if not source then
-		io.stderr:write("Couldn't open file." .. err .. "\n")
+		io.stderr:write("Couldn't open file: " .. err_src .. "\n")
 		os.exit(1)
 	end
 	local pt = source:read("*a") -- Read the source file whole
@@ -26,13 +26,13 @@ local function main()
 	print("Encrypted: " .. enc)
 
 	-- Writing to the output file
-	local Out = io.open(arg[2], "w")
-	if not Out then
-		io.stderr:write(err .. "\n")
+	local out, err_out = io.open(arg[2], "w")
+	if not out then
+		io.stderr:write(err_out .. "\n")
 		os.exit(1)
 	end
-	Out:write(enc)
-	Out:close()
+	out:write(enc)
+	out:close()
 end
 
 function Encrypt(pt, key)
