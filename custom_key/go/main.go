@@ -50,7 +50,7 @@ func main() {
 	args := os.Args
 	if len(args) == 2 && args[1] == "test" {
 		fmt.Println("Testing: Encryption and Decryption...")
-		test();
+		test()
 		return
 	}
 
@@ -132,9 +132,9 @@ func parse_file_data(data string) (FileInput, error) {
 	return ip, nil
 }
 
-func assert(cond bool) {
-	if !cond {
-		log.Fatal("Assert Failed!")
+func assert(condition bool, msg string) {
+	if !condition {
+		log.Fatal(msg)
 	}
 }
 
@@ -142,30 +142,32 @@ func assert(cond bool) {
 func test() {
 	defer fmt.Println("All tests passed!")
 	text := "Hello"
-	results := []string {"Ifmmp", "Uryyb", "Rovvy" }
-	enc_keys := []string {
+	results := []string{"Ifmmp", "Uryyb", "Rovvy"}
+	enc_keys := []string{
 		"BCDEFGHIJKLMNOPQRSTUVWXYZA",
 		"NOPQRSTUVWXYZABCDEFGHIJKLM",
 		"KLMNOPQRSTUVWXYZABCDEFGHIJ",
 	}
-	dec_keys := []string {
+	dec_keys := []string{
 		"ZABCDEFGHIJKLMNOPQRSTUVWXY",
 		"NOPQRSTUVWXYZABCDEFGHIJKLM",
 		"QRSTUVWXYZABCDEFGHIJKLMNOP",
 	}
-	pt := FileInput {
-		key: "",
+	pt := FileInput{
+		key:  "",
 		text: text,
 	}
 	for i, k := range enc_keys {
 		pt.key = k
 		enc := pt.encrypt()
-		assert(enc == results[i])
+		msg := fmt.Sprintf("Assertion failed at key: %v, %v", i, k)
+		assert(enc == results[i], msg)
 	}
 	for i, k := range dec_keys {
 		pt.key = k
 		pt.text = results[i]
 		enc := pt.encrypt()
-		assert(enc == text)
+		msg := fmt.Sprintf("Assertion failed at key: %v, %v", i, k)
+		assert(enc == text, msg)
 	}
 }

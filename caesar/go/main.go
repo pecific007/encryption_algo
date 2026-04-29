@@ -12,7 +12,7 @@ func main() {
 	args := os.Args
 	if len(args) == 2 && args[1] == "test" {
 		fmt.Println("Testing: Encryption and Decryption...")
-		test();
+		test()
 		return
 	}
 	// Making sure enough arguemtns are provided
@@ -73,22 +73,22 @@ func encrypt(text string, key int) string {
 			if base < 0 {
 				base = 26 + base
 			}
-			c = base % 26 + 'A'
+			c = base%26 + 'A'
 		case unicode.IsLower(c):
 			base := ((c - 'a') + rune(key))
 			if base < 0 {
 				base = 26 + base
 			}
-			c = base % 26 + 'a'
+			c = base%26 + 'a'
 		}
 		enc = append(enc, c)
 	}
 	return string(enc)
 }
 
-func assert(condition bool) {
+func assert(condition bool, msg string) {
 	if !condition {
-		log.Fatal("Assertion Failed.")
+		log.Fatal(msg)
 	}
 }
 
@@ -96,16 +96,18 @@ func assert(condition bool) {
 func test() {
 	defer fmt.Println("All tests passed!")
 	pt := "Hello"
-	keys := []int { 1, 13, 10 }
-	results := []string { "Ifmmp", "Uryyb", "Rovvy" }
+	keys := []int{1, 13, 10}
+	results := []string{"Ifmmp", "Uryyb", "Rovvy"}
 	/* ---------- Encrypt ---------- */
 	for i, k := range keys {
 		enc := encrypt(pt, k)
-		assert(enc == results[i])
+		msg := fmt.Sprintf("Assertion failed at key: %v", i)
+		assert(enc == results[i], msg)
 	}
 	/* ---------- Decrypt ---------- */
 	for i, k := range keys {
 		enc := encrypt(results[i], -k)
-		assert(enc == pt)
+		msg := fmt.Sprintf("Assertion failed at key: %v", i)
+		assert(enc == pt, msg)
 	}
 }
