@@ -1,11 +1,6 @@
 #!/usr/bin/env lua
 
--- Making sure sure enough args are provided
-if #arg ~= 3 then
-	io.stderr:write("Usage: " .. arg[0] .. " <input> <output> <key>\n")
-end
-
-local function main()
+function Main()
 	-- Open the source file
 	local source, err_src = io.open(arg[1], "r")
 	if not source then
@@ -53,4 +48,35 @@ function Encrypt(pt, key)
 	return table.concat(enc)
 end
 
-main()
+function Test()
+	local pt = "Hello"
+	local keys = { 1, 13, 10 }
+	local results = { "Ifmmp", "Uryyb", "Rovvy" }
+
+	print("Testing...")
+	for i = 1, #keys do
+		local enc = Encrypt(pt, keys[i])
+		assert(enc == results[i], "Assertion failed at keys: " .. i)
+	end
+	for i = 1, #keys do
+		local enc = Encrypt(results[i], (keys[i] * -1))
+		assert(enc == pt, "Assertion failed at key: " .. i)
+	end
+	print("All test passed!")
+end
+
+-- Making sure sure enough args are provided
+if #arg == 1 then
+	if arg[1] == "test" then
+		Test()
+		os.exit(0)
+	else
+		io.stderr:write("Usage: " .. arg[0] .. " <input> <output> <key>\n")
+		os.exit(1)
+	end
+elseif #arg ~= 3 then
+	io.stderr:write("Usage: " .. arg[0] .. " <input> <output> <key>\n")
+	os.exit(1)
+else
+	Main()
+end

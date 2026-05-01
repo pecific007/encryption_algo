@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-./main.lua ../plain_text.txt out.txt 1
+if [[ "$1" == "test" ]]; then
+    ./main.lua test
+else
+    ./main.lua ../plain_text.txt out.txt 1
+fi

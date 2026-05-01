@@ -1,10 +1,5 @@
 #!/usr/bin/env lua
 
-if #arg ~= 2 then
-	io.stderr:write("Usage: " .. arg[0] .. " <input> <output>\n")
-	os.exit(1)
-end
-
 FileInput = {}
 
 function Main()
@@ -68,4 +63,60 @@ function Encrypt()
 	return table.concat(enc)
 end
 
-Main()
+function Test()
+	local text = "Hello"
+	local results_enc = { "Ifmmp", "Uryyb", "Rovvy" }
+	-- local results_dec = { "Khoor", "Hello", "Byffi" }
+	local keys_enc = {
+		"BCDEFGHIJKLMNOPQRSTUVWXYZA",
+		"NOPQRSTUVWXYZABCDEFGHIJKLM",
+		"KLMNOPQRSTUVWXYZABCDEFGHIJ",
+	}
+	local keys_dec = {
+		"ZABCDEFGHIJKLMNOPQRSTUVWXY",
+		"NOPQRSTUVWXYZABCDEFGHIJKLM",
+		"QRSTUVWXYZABCDEFGHIJKLMNOP",
+	}
+	local k_table_enc = { {}, {}, {} }
+	for i = 1, #keys_enc do
+		for j in keys_enc[i]:gmatch(".") do
+			table.insert(k_table_enc[i], j)
+		end
+	end
+	local k_table_dec = { {}, {}, {} }
+	for i = 1, #keys_dec do
+		for j in keys_dec[i]:gmatch(".") do
+			table.insert(k_table_dec[i], j)
+		end
+	end
+
+	-- To add key as a table in FileInput
+	FileInput = { "", text }
+	for i = 1, #keys_enc do
+		FileInput[1] = k_table_enc[i]
+		local enc = Encrypt()
+		assert(enc == results_enc[i], "Assertion failed at key no.: " .. i)
+	end
+	for i = 1, #keys_dec do
+		FileInput[1] = k_table_dec[i]
+		FileInput[2] = results_enc[i]
+		local enc = Encrypt()
+		assert(enc == text, "Assertion failed at key no.: " .. i)
+	end
+	print("All tests passed")
+end
+
+if #arg == 1 then
+	if arg[1] == "test" then
+		print("Testing...")
+		Test()
+		os.exit(0)
+	else
+		io.stderr:write("Usage: " .. arg[0] .. " <input> <output>\n")
+	end
+elseif #arg <= 2 then
+	io.stderr:write("Usage: " .. arg[0] .. " <input> <output>\n")
+	os.exit(1)
+else
+	Main()
+end
