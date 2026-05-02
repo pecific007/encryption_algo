@@ -114,7 +114,7 @@ if #arg == 1 then
 	else
 		io.stderr:write("Usage: " .. arg[0] .. " <input> <output>\n")
 	end
-elseif #arg <= 2 then
+elseif #arg ~= 2 then
 	io.stderr:write("Usage: " .. arg[0] .. " <input> <output>\n")
 	os.exit(1)
 else
