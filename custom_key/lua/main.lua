@@ -65,8 +65,7 @@ end
 
 function Test()
 	local text = "Hello"
-	local results_enc = { "Ifmmp", "Uryyb", "Rovvy" }
-	-- local results_dec = { "Khoor", "Hello", "Byffi" }
+	local results = { "Ifmmp", "Uryyb", "Rovvy" }
 	local keys_enc = {
 		"BCDEFGHIJKLMNOPQRSTUVWXYZA",
 		"NOPQRSTUVWXYZABCDEFGHIJKLM",
@@ -95,11 +94,11 @@ function Test()
 	for i = 1, #keys_enc do
 		FileInput[1] = k_table_enc[i]
 		local enc = Encrypt()
-		assert(enc == results_enc[i], "Assertion failed at key no.: " .. i)
+		assert(enc == results[i], "Assertion failed at key no.: " .. i)
 	end
 	for i = 1, #keys_dec do
 		FileInput[1] = k_table_dec[i]
-		FileInput[2] = results_enc[i]
+		FileInput[2] = results[i]
 		local enc = Encrypt()
 		assert(enc == text, "Assertion failed at key no.: " .. i)
 	end
