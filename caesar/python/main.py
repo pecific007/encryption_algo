@@ -4,25 +4,18 @@ import sys
 
 def main():
     args = sys.argv
-    if len(args) == 2 and args[1] == "test":
-        print("Testing: Encryption and Decryption...")
-        test()
-        exit(0)
-    # Makesure enough arguments are provided
-    if len(args) != 4:
-        print(f"Usage: {args[0]} <input> <output> <key>")
-        exit(1)
-
     # Try to read fro input file
     try:
         with open(args[1]) as source:
             text = source.read()
     except FileNotFoundError:
-        print(f"File {args[1]} not found. Makesure you've entered correct name")
+        sys.stderr.write(
+            f"File {args[1]} not found. Makesure you've entered correct name\n"
+        )
         exit(1)
 
     if len(text) == 0:
-        print("Input file cannot be empty.")
+        sys.stderr.write("Input file cannot be empty.\n")
         exit(1)
 
     # Opening/creating output file
@@ -32,7 +25,7 @@ def main():
     try:
         key = int(args[3])
     except ValueError:
-        print("Invalid key.")
+        sys.stderr.write("Invalid key.\n")
         out.close()
         exit(1)
 
@@ -70,22 +63,33 @@ def encrypt(text, key):
     # Join list into a string and return
     return "".join(enc)
 
+
 def test():
-    pt = 'Hello'
-    keys = [ 1, 13, 10 ]
-    results = [ "Ifmmp", "Uryyb", "Rovvy" ]
-    ''' ------------ Encrypt ------------'''
+    pt = "Hello"
+    keys = [1, 13, 10]
+    results = ["Ifmmp", "Uryyb", "Rovvy"]
+    """ ------------ Encrypt ------------"""
     for i in range(len(keys)):
         enc = encrypt(pt, keys[i])
         assert enc == results[i], f"Enc: Key {i} assert failed"
 
-    ''' ------------ Decrypt ------------'''
+    """ ------------ Decrypt ------------"""
     for i in range(len(keys)):
         enc = encrypt(results[i], -keys[i])
         assert enc == pt, f"Dec: Key {i} assert failed"
 
     print("All tests passed!")
 
+
 # Calling the main function
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2 and sys.argv[1] == "test":
+        print("Testing: Encryption and Decryption...")
+        test()
+        exit(0)
+    # Makesure enough arguments are provided
+    elif len(sys.argv) != 4:
+        sys.stderr.write(f"Usage: {sys.argv[0]} <input> <output> <key>\n")
+        exit(1)
+    else:
+        main()

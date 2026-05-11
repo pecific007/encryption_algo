@@ -23,14 +23,6 @@ class fileInput:
 
 def main():
     args = sys.argv
-    if len(args) == 2 and args[1] == "test":
-        print("Testing: Encryption and Decryption...")
-        test()
-        exit(0)
-    if len(args) != 3:
-        sys.stderr.write(f"Usage: {args[0]} <input> <output>")
-        sys.exit(1)
-
     try:
         with open(args[1]) as source:
             data = source.read()
@@ -82,9 +74,14 @@ def parse_input_file(data):
     ip = fileInput("".join(key), text)
     return ip, False
 
+
 def test():
     text = "Hello"
-    results = [ "Ifmmp", "Uryyb", "Rovvy", ]
+    results = [
+        "Ifmmp",
+        "Uryyb",
+        "Rovvy",
+    ]
     enc_key = [
         "BCDEFGHIJKLMNOPQRSTUVWXYZA",
         "NOPQRSTUVWXYZABCDEFGHIJKLM",
@@ -96,23 +93,32 @@ def test():
         "QRSTUVWXYZABCDEFGHIJKLMNOP",
     ]
 
-    ''' ---------- Encrypt ----------'''
+    """ ---------- Encrypt ----------"""
     pt = fileInput("", text)
     for i in range(len(enc_key)):
         pt.key = enc_key[i]
         enc = pt.encrypt()
         assert enc == results[i], f"Enc: Error on key[{i}]"
 
-    ''' ---------- Decrypt ----------'''
+    """ ---------- Decrypt ----------"""
 
     for i in range(len(dec_key)):
         enc = pt.encrypt()
         pt.key = dec_key[i]
-        pt.text = results[i];
+        pt.text = results[i]
         enc = pt.encrypt()
         assert enc == text, f"Dec: Error on key[{i}]"
 
     print("All tests passed!")
 
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2 and sys.argv[1] == "test":
+        print("Testing: Encryption and Decryption...")
+        test()
+        exit(0)
+    elif len(sys.argv) != 3:
+        sys.stderr.write(f"Usage: {sys.argv[0]} <input> <output>\n")
+        sys.exit(1)
+    else:
+        main()
